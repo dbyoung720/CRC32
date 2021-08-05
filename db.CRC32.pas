@@ -113,7 +113,7 @@ begin
   Result := _crc32c_append_hw(0, Buffer, len);
 end;
 
-function CommonFunc(const strFileName: string; CRC32Func: TCRC32Func): DWORD;
+function CommonCRC32(const strFileName: string; CRC32Func: TCRC32Func): DWORD;
 var
   iFileHandle: THandle;
   iFileLength: UInt64;
@@ -163,19 +163,19 @@ end;
 { 文件 CRC32 CRC32I_Table }
 function CRC32I_Table_File(const strFileName: string): DWORD;
 begin
-  Result := CommonFunc(strFileName, CRC32I_Table);
+  Result := CommonCRC32(strFileName, CRC32I_Table);
 end;
 
 { 文件 CRC32 CRC32C_Table }
 function CRC32C_Table_File(const strFileName: string): DWORD;
 begin
-  Result := CommonFunc(strFileName, CRC32C_Table);
+  Result := CommonCRC32(strFileName, CRC32C_Table);
 end;
 
 { 文件 CRC32 CRC32C_SSE42 }
 function CRC32C_SSE42_File(const strFileName: string): DWORD;
 begin
-  Result := CommonFunc(strFileName, CRC32C_SSE42);
+  Result := CommonCRC32(strFileName, CRC32C_SSE42);
 end;
 
 end.
