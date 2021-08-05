@@ -123,31 +123,38 @@ var
 begin
   Result := 0;
 
+  { 文件是否存在 }
   if not FileExists(strFileName) then
     Exit;
 
+  { 文件是否能正确打开 }
   iFileHandle := FileOpen(strFileName, fmOpenRead);
   if iFileHandle = INVALID_HANDLE_VALUE then
     Exit;
 
   try
+    { 获取文件大小。GetFileSize、FileSeek 等等函数，针对2G以上大文件都是无效的。必须使用此函数 }
     if not GetFileInformationByHandle(iFileHandle, FileInfo) then
       Exit;
 
+    { 文件大小不能为 0 }
     iFileLength := UInt64(FileInfo.nFileSizeHigh) shl 32 + FileInfo.nFileSizeLow;
     if iFileLength = 0 then
       Exit;
 
+    { 创建文件映射。必须这么写，否则映射会失败 }
     MapHandle := CreateFileMapping(iFileHandle, nil, PAGE_READONLY, 0, iFileLength, nil);
     if MapHandle = INVALID_HANDLE_VALUE then
       Exit;
 
     try
+      { 获取文件映射指针 }
       ViewPointer := MapViewOfFile(MapHandle, FILE_MAP_READ, 0, 0, 0);
       if ViewPointer = nil then
         Exit;
 
       try
+        { 进行 CRC32 校验 }
         Result := CRC32Func(ViewPointer, iFileLength);
       finally
         UnmapViewOfFile(ViewPointer);
