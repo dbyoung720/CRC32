@@ -35,8 +35,6 @@ function CRC32C_SSE42_File(const strFileName: string): DWORD;
 
 implementation
 
-function _crc32c_append_hw(crc: DWORD; const Buffer: PByte; len: Integer): DWORD; cdecl; external;
-
 const
   c_CRC32I_Table: array [0 .. 255] of DWORD = (                                                                                                                                     //
     $00000000, $77073096, $EE0E612C, $990951BA, $076DC419, $706AF48F, $E963A535, $9E6495A3, $0EDB8832, $79DCB8A4, $E0D5E91E, $97D2D988, $09B64C2B, $7EB17CBD, $E7B82D07, $90BF1D91, //
@@ -79,7 +77,9 @@ const
 type
   TCRC32Func = function(Buffer: PByte; len: Integer): DWORD;
 
-  { CRC32 IEEE 802.3 Table }
+function _crc32c_append_hw(crc: DWORD; const Buffer: PByte; len: Integer): DWORD; cdecl; external;
+
+{ CRC32 IEEE 802.3 Table }
 function CRC32I_Table(Buffer: PByte; len: Integer): DWORD;
 var
   I: Integer;
